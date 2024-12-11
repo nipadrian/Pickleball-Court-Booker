@@ -9,7 +9,7 @@ from selenium.webdriver.support.ui import Select
 
 # Configuration
 USERNAME = ''
-PASSWORD = ''
+PASSWORD = '!'
 COURT_DATE = 'MM/DD/YYYY'  # Desired booking date
 TIME_SLOT = 'desired_time'  # Time slot string visible on the site
 
@@ -50,7 +50,7 @@ def book_appointment():
         select.select_by_value("6453")
 
         ################################## CALENDAR #####################################
-        target_date = "20241210"  # Replace with the desired date in the same format
+        target_date = "20241212"  # Replace with the desired date in the same format
 
         date_xpath = f"//a[contains(@href, \"dosubmit('{target_date}',\")]"
         date_element = WebDriverWait(driver, 10).until(
@@ -66,16 +66,28 @@ def book_appointment():
         next_page_button.click()
 
         ################################## Booking #####################################
-        xpath_query = "//tr[td/div[contains(text(), 'Tuesday') and contains(text(), 'December 10, 2024')] and td/span[contains(text(), '7:00pm')] and td[contains(text(), 'Lexington Colony Pickleball Court 1')]]//input[@value='Book it']"
+        # book_button_path = "//tr[td/div[contains(text(), 'Tuesday') and contains(text(), 'December 10, 2024')] and td/span[contains(text(), '3:30pm')] and td[contains(text(), 'Lexington Colony Pickleball Court 1')]]//input[@value='Book it']"
+        # book_button_path = "//span[text()='4:00pm']/ancestor::tr//input[@value='Book it']"
+        #book_button_path = "//*[@id='wrapper']/table[5]/tbody/tr/td[3]/table/tbody/tr[2]/td/table/tbody/tr[4]/td[3]/input"
+        #book_button_path = "table tr td span[text='3:30pm'] input[value='Book it']"
+        # last tr is the row number
+
+        book_button_path = "//tr[td[span[text()='7:30pm']] and td[div[contains(text(),'December 12, 2024')]]]//input[@value='Book it']"
 
         book_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, xpath_query))
+            EC.element_to_be_clickable((By.XPATH, book_button_path))
         )
+        #
+        # book_button = WebDriverWait(driver, 10).until(
+        #     EC.element_to_be_clickable((By.CSS_SELECTOR, book_button_path))
+        # )
+        #
         if book_button:
             book_button.click()
             print("Booking button clicked!")
         else:
             print("No matching 'Book it' button found.")
+
 
         ################################## Finalize Appointment #####################################
         finalize_appointment_button_xpath = "//*[@id='myForm2']/table[2]/tbody/tr/td/table/tbody/tr[4]/td/input[2]"
@@ -97,3 +109,5 @@ print("Scheduler running. Waiting for midnight...")
 while True:
     schedule.run_pending()
     time.sleep(1)
+
+#book_appointment()
